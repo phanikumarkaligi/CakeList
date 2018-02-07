@@ -14,6 +14,7 @@
 @end
 
 @implementation MasterViewController
+@synthesize refreshControl;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -105,6 +106,14 @@
         }
     }];
     [task resume];
+}
+
+
+- (void)refreshTable {
+    //TODO: refresh your data
+    [refreshControl endRefreshing];
+    [self getData];
+    [self.tableView reloadData];
 }
 
 @end

@@ -11,5 +11,8 @@
 @interface MasterViewController : UITableViewController
 
 
+- (IBAction)refreshTable;
+@property (strong,nonatomic) IBOutlet UIRefreshControl *refreshControl;
+
 @end
 
