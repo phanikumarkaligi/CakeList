@@ -189,7 +189,6 @@
 				TargetAttributes = {
 					DBF17A101B0B648F004E6311 = {
 						CreatedOnToolsVersion = 6.3;
-						DevelopmentTeam = M5949Y72QS;
 					};
 					DBF17A2C1B0B648F004E6311 = {
 						CreatedOnToolsVersion = 6.3;
@@ -370,10 +369,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = M5949Y72QS;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "Cake List/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.mightydevelopers.Cake-List";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.waracle.Cake-List";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -382,10 +381,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = M5949Y72QS;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "Cake List/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.mightydevelopers.Cake-List";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.waracle.Cake-List";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
