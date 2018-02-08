@@ -31,31 +31,27 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    CakeCell *cell = (CakeCell*)[tableView dequeueReusableCellWithIdentifier:@"CakeCell"];
-    
+    CakeCell *cell = (CakeCell*)[tableView dequeueReusableCellWithIdentifier:@"CakeCell" forIndexPath:indexPath];
     NSDictionary *object = self.objects[indexPath.row];
     cell.titleLabel.text = object[@"title"];
     cell.descriptionLabel.text = object[@"desc"];
- 
     
-//    NSURL *aURL = [NSURL URLWithString:object[@"image"]];
-//    NSData *data = [NSData dataWithContentsOfURL:aURL];
-//    UIImage *image = [UIImage imageWithData:data];
-//    [cell.cakeImageView setImage:image];
+    //cell.cakeImageView = assign a default image
+
     
+    // Make a async call to fetch the image
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        
-        //Run your loop here
         NSURL *aURL = [NSURL URLWithString:object[@"image"]];
         NSData *data = [NSData dataWithContentsOfURL:aURL];
-        
-        dispatch_async(dispatch_get_main_queue(), ^(void) {
-            //stop your HUD here
-            //This is run on the main thread
-            UIImage *image = [UIImage imageWithData:data];
-            [cell.cakeImageView setImage:image];
-            
-        });
+        UIImage *image = [UIImage imageWithData:data];
+       // show the image in the main thread
+        if(image) {
+            dispatch_async(dispatch_get_main_queue(), ^(void) {
+                //This is run on the main thread
+                CakeCell *updatedCell = (id)[tableView cellForRowAtIndexPath:indexPath];
+                [updatedCell.cakeImageView setImage:image];
+            });
+        }
     });
     
     return cell;
@@ -67,40 +63,28 @@
 
 - (void)getData{
     
-//    NSURL *url = [NSURL URLWithString:@"https://gist.githubusercontent.com/hart88/198f29ec5114a3ec3460/raw/8dd19a88f9b8d24c23d9960f3300d0c917a4f07c/cake.json"];
-//    
-//    NSData *data = [NSData dataWithContentsOfURL:url];
-//    
-//    NSError *jsonError;
-//    id responseData = [NSJSONSerialization
-//                       JSONObjectWithData:data
-//                       options:kNilOptions
-//                       error:&jsonError];
-//    if (!jsonError){
-//        self.objects = responseData;
-//        [self.tableView reloadData];
-//    } else {
-//    }
+NSURL *url = [NSURL URLWithString:@"https://gist.githubusercontent.com/hart88/198f29ec5114a3ec3460/raw/8dd19a88f9b8d24c23d9960f3300d0c917a4f07c/cake.json"];
     
     
-    NSURL *url = [NSURL URLWithString:@"https://gist.githubusercontent.com/hart88/198f29ec5114a3ec3460/raw/8dd19a88f9b8d24c23d9960f3300d0c917a4f07c/cake.json"];
-    
-    //  NSData *data = [NSData dataWithContentsOfURL:url];
-    
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
-    
-    NSURLSessionDataTask *task = [session dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+    NSURLSession *session = [NSURLSession sharedSession];
+    NSURLSessionTask *task = [session dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         if (error) {
-            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Network Error" message:error.localizedFailureReason delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil ];
-            [alert show];
+            NSLog(@"error %@",error.localizedFailureReason);
+            [refreshControl endRefreshing];
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Network Error" message:error.localizedFailureReason preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+            [alertController addAction:okAction];
+            [self presentViewController:alertController animated:YES completion:nil];
         } else {
             NSError *jsonError;
             id responseData = [NSJSONSerialization
                                JSONObjectWithData:data
                                options:kNilOptions
                                error:&jsonError];
+            NSLog(@"response data = %@",responseData);
             self.objects = responseData;
             dispatch_async(dispatch_get_main_queue(), ^{
+                [refreshControl endRefreshing];
                 [self.tableView reloadData];
             });
         }
@@ -110,10 +94,7 @@
 
 
 - (void)refreshTable {
-    //TODO: refresh your data
-    [refreshControl endRefreshing];
     [self getData];
-    [self.tableView reloadData];
 }
 
 @end
